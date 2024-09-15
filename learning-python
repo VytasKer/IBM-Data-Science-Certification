@@ -5,3 +5,15 @@ sorted_tuple = sorted(tuple)
 print(tuple)
 print(sorted_tuple)
 
+# difference between 'sorted' and 'sort'
+# tuples are immutable and lists are mutable
+
+list = [1, 2, 3]
+print(list)
+list.sort(reverse=True)
+print(list)
+
+list = [1, 2, 3]
+print(list)
+sorted_list = sorted(list)
+print(sorted_list)
