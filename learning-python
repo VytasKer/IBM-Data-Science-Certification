@@ -1,0 +1,7 @@
+# sorting a tuple makes it a list ??
+
+tuple = ("Jooo", "Ahhaaa", "Stufff")
+sorted_tuple = sorted(tuple)
+print(tuple)
+print(sorted_tuple)
+
