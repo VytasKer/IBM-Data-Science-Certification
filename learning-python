@@ -34,3 +34,8 @@ first_dict["city"] = "Atlanta"
 
 print(first_dict)
 print(second_dict)
+
+# turning dictionary into items list (list of tuples)
+
+first_items = list(first_dict.items())
+print(first_items)
