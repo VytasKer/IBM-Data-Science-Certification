@@ -17,3 +17,20 @@ list = [1, 2, 3]
 print(list)
 sorted_list = sorted(list)
 print(sorted_list)
+
+# copy of a dictionary with .copy method - it creates a new copy of dict distinct in memory
+
+first_dict = {
+    "city" : "Chicago",
+    "country" : "USA"
+}
+
+second_dict = first_dict.copy()
+
+print(first_dict)
+print(second_dict)
+
+first_dict["city"] = "Atlanta"
+
+print(first_dict)
+print(second_dict)
