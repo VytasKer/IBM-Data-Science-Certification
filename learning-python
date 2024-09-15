@@ -39,3 +39,14 @@ print(second_dict)
 
 first_items = list(first_dict.items())
 print(first_items)
+
+# simple difference vs symmetric difference in sets (simple returns one set values .vs symm return diff values from both sets)
+
+first_set = {"city", "Chicago","country", "USA"}
+second_set = {"city", "Atlanta","town", "USA"}
+
+simple_diff = first_set.difference(second_set)
+print(simple_diff)
+
+symm_diff = first_set.symmetric_difference(second_set)
+print(symm_diff)
