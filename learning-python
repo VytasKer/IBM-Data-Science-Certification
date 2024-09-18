@@ -50,3 +50,78 @@ print(simple_diff)
 
 symm_diff = first_set.symmetric_difference(second_set)
 print(symm_diff)
+
+
+
+# read/write file exercise
+
+  
+'''
+The two arguments for this function are the files:
+    - currentMem: File containing list of current members
+    - exMem: File containing list of old members
+    
+    This function should remove all rows from currentMem containing 'no' 
+    in the 'Active' column and appends them to exMem.
+
+    r+ : Reading and writing. Cannot truncate the file.
+w+ : Writing and reading. Truncates the file.
+a+ : Appending and Reading. Creates a new file, if none exists. 
+You dont have to dwell on the specifics of each mode for this lab.
+    '''
+def cleanFiles(currentMem, exMem):
+    # TODO: Open the currentMem file as in r+ mode
+    with open(currentMem, "r+") as current_file:
+        #TODO: Open the exMem file in a+ mode
+        with open(exMem, "a+") as ex_file:
+        #TODO: Read each member in the currentMem (1 member per row) file into a list.
+            ls_curr_mem = []
+            current_file.seek(0)
+            ls_curr_mem = current_file.readlines()
+
+            header = ls_curr_mem[0]
+            ls_curr_mem.pop(0)
+
+            # print("Here are two first lines of list:", '\n', ls_curr_mem[0], '\n', ls_curr_mem[1])
+        # Hint: Recall that the first line in the file is the header.
+                
+        #TODO: iterate through the members and create a new list of the innactive members
+            ls_inactive_mem = []
+
+            for member in ls_curr_mem:
+                if "no" in member:
+                    ls_inactive_mem.append(member)
+
+            # print("Here are two first lines of inactive list:", '\n', ls_inactive_mem[0], '\n', ls_inactive_mem[1])
+                
+        # Go to the beginning of the currentMem file
+            current_file.seek(0)
+            current_file.write(header)
+            
+        # TODO: Iterate through the members list.
+        # If a member is inactive, add them to exMem, otherwise write them into currentMem
+            for member in ls_curr_mem:
+                if (member in ls_inactive_mem):
+                    ex_file.write(member)
+                else:
+                    current_file.write(member)
+            current_file.truncate()
+
+#    pass  Remove this line when done implementation
+
+
+# The code below is to help you view the files.
+# Do not modify this code for this exercise.
+memReg = '/members.txt'
+exReg = '/inactive.txt'
+cleanFiles(memReg,exReg)
+
+
+headers = "Membership No  Date Joined  Active  \n"
+with open(memReg,'r') as readFile:
+    print("Active Members: \n\n")
+    print(readFile.read())
+    
+with open(exReg,'r') as readFile:
+    print("Inactive Members: \n\n")
+    print(readFile.read())
