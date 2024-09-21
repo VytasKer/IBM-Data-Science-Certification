@@ -125,3 +125,35 @@ with open(memReg,'r') as readFile:
 with open(exReg,'r') as readFile:
     print("Inactive Members: \n\n")
     print(readFile.read())
+
+
+# parse XML and add it to df. Template
+
+# Parse the XML file
+tree = etree.parse("Sample-employee-XML-file.xml")
+
+# Get the root of the XML tree
+root = tree.getroot()
+
+# Define the columns for the DataFrame
+columns = ["firstname", "lastname", "title", "division", "building", "room"]
+
+# Initialize an empty DataFrame
+datatframe = pd.DataFrame(columns=columns)
+
+# Iterate through each node in the XML root
+for node in root:
+    # Extract text from each element
+    firstname = node.find("firstname").text
+    lastname = node.find("lastname").text
+    title = node.find("title").text
+    division = node.find("division").text
+    building = node.find("building").text
+    room = node.find("room").text
+    
+    # Create a DataFrame for the current row
+    row_df = pd.DataFrame([[firstname, lastname, title, division, building, room]], columns=columns)
+    
+    # Concatenate with the existing DataFrame
+    datatframe = pd.concat([datatframe, row_df], ignore_index=True)
+
