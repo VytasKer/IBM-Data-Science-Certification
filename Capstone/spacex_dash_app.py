@@ -11,6 +11,27 @@ spacex_df =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.app
 max_payload = spacex_df['Payload Mass (kg)'].max()
 min_payload = spacex_df['Payload Mass (kg)'].min()
 
+launch_sites = []
+launch_sites.append({'label': 'All', 'value': 'All'})
+all_launch_sites = spacex_df['Launch Site'].unique().tolist()
+for launch_site in all_launch_sites:
+    launch_sites.append({'label': launch_site, 'value': launch_site})
+
+"""
+filtered_df = spacex_df[spacex_df['Launch Site'] == 'VAFB SLC-4E']
+print(filtered_df.head())
+success_rate = filtered_df['class'].mean()
+print('Success rate: ', success_rate)
+
+var_names=['Successful Launches', 'Unsuccessful Launches']
+
+fig = px.pie(filtered_df, values=[success_rate, 1 - success_rate], 
+            names=var_names, 
+            title='Success Rate for Selected Site')
+
+print(fig)
+"""
+
 # Create a dash application
 app = dash.Dash(__name__)
 
@@ -19,11 +40,7 @@ app.layout = html.Div([
     html.H1('SpaceX Launch Records Dashboard', style={'textAlign': 'center', 'color': '#503D36', 'font-size': 35}),
     html.P("Select a Launch Site:", style={'textAlign': 'left', 'color': '#503D36', 'font-size': 30}),
     dcc.Dropdown(id='site-dropdown', 
-                 options=[{'label': 'All Sites', 'value': 'ALL'},
-                          {'label': 'CCAFS LC-40', 'value': 'site1'},
-                          {'label': 'CCAFS SLC-40', 'value': 'CCAFS SLC-40'},
-                          {'label': 'KSC LC-39A', 'value': 'KSC LC-39A'},
-                          {'label': 'VAFB SLC-4E', 'value': 'VAFB SLC-4E'}],
+                 options=launch_sites,
                  value='ALL',
                  placeholder="Select a Launch Site here",
                  searchable=True),
@@ -53,18 +70,12 @@ def get_pie_chart(entered_site):
     else:
         # return the outcomes piechart for a selected site
         filtered_df = spacex_df[spacex_df['Launch Site'] == entered_site]
-        fig = px.pie(filtered_df, values='class', 
-                     names='Launch Site', 
-                     title='Total Success Launches for Selected Site')
-        
-    # Improve layout and styling
-    fig.update_layout(
-        title_font=dict(size=30),  # Larger title
-        title_x=0.5,               # Center title
-        legend_title_font_size=30,  # Larger legend title
-        legend_font_size=30,        # Larger legend labels
-        annotations=[dict(font_size=30)],  # Larger pie chart labels
-    )
+
+        filtered_df=filtered_df.groupby(['Launch Site','class']).size().reset_index(name='class count')
+
+        fig = px.pie(filtered_df,values='class count',
+                     names='class',
+                     title=f"Total Success Launches for site {entered_site}")
 
     return fig
 
@@ -82,25 +93,15 @@ def get_scatter_chart(entered_site, payload_range):
                          title='Correlation between Payload and Success for All Sites')
         return fig
     else:
-        filtered_df = spacex_df[spacex_df['Launch Site'] == entered_site]
+        filtered_df = spacex_df[(spacex_df['Launch Site'] == entered_site) & 
+                                 (spacex_df['Payload Mass (kg)'] >= low) & 
+                                 (spacex_df['Payload Mass (kg)'] <= high)]
         fig = px.scatter(filtered_df, x='Payload Mass (kg)', y='class',
                          color="Booster Version Category",
                          title='Correlation between Payload and Success for Selected Site')
-    
-    # Improve layout and styling
-    fig.update_layout(
-        title_font=dict(size=30),          # Larger title
-        title_x=0.5,                       # Center title
-        xaxis_title='Payload Mass (kg)',    # Add x-axis title
-        yaxis_title='Launch Outcome',       # Add y-axis title
-        xaxis=dict(title_font_size=30, tickfont_size=30),  # Larger x-axis labels and ticks
-        yaxis=dict(title_font_size=30, tickfont_size=30),  # Larger y-axis labels and ticks
-        legend_title_font_size=30,          # Larger legend title
-        legend_font_size=30,                # Larger legend labels
-    )
 
     return fig
 
 # Run the app
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
